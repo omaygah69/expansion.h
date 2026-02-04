@@ -1,5 +1,6 @@
-#include "extension.h"
+#include "../expansion.h"
 #include <stdio.h>
+#include <string.h>
 
 // define a struct list
 typedef struct
@@ -38,7 +39,7 @@ int main()
     ls_foreach(string, ss, &lstext){
         // you can get the index by: i = it - da.items (see header)
         i32 i = ss - lstext.items;
-        printf("string[%i] %.*s\n", i, STR_FMT(*ss));
+        printf("string[%i] %.*s (%zu characters)\n", i, STR_FMT(*ss), ss->size);
     }    
 
     multifree(lsi.items, lstext.items);
