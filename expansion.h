@@ -7,6 +7,7 @@
 typedef int32_t i32;
 typedef uint8_t u8;
 typedef uint64_t u64;
+typedef int64_t i64;
 typedef i32 b32;
 
 #define KiB(n) ((u64)(n) << 10)
@@ -46,9 +47,13 @@ typedef struct
     size_t size;
 } string;
 
+static string str_whitespace = {6, "\t\n\v\f\r"};
 string StringSubstr(string str, u64 start, u64 end);
 #define STR_LIT(s) (string){ (u8*)(s), sizeof((s)) - 1}
 #define STR_FMT(s8) (i32)(s8).size, (s8).str
+string StringMake(const u8* data, i64 count);
+string StringCstrlen(const char* data);
+string StringFromCstring(const char* data);
 /* #define sasprintf(write_to, ...) { \ */
 /*  u8* tmp_string = (write_to); \ */
 /*  asprintf(&(write_to), __VA_ARGS__); \ */
@@ -135,6 +140,29 @@ void ArenaClear(MemArena* arena)
 //----------------------------------------------------------------------------------
 // StringBuilder Functions
 //----------------------------------------------------------------------------------
+
+string StringCstrlen(const char* data)
+{
+  size_t result = 0;
+  while(data[result] != 0) result++;
+  return result;
+}
+
+string StringMake(const u8* data, i64 count)
+{
+  string result;
+  result.size = count;
+  result.str = data;
+  return result;
+}
+
+string StringFromCstring(const char* data)
+{
+  string result;
+  result.count = StringCstrlen(data);
+  result.str = data;
+  return result;
+}
 
 string StringSubstr(string str, u64 start, u64 end)
 {
