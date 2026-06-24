@@ -47,13 +47,14 @@ typedef struct
     size_t size;
 } string;
 
-static string str_whitespace = {6, "\t\n\v\f\r"};
+static string str_whitespace = {" \t\n\v\f\r", 6};
 string StringSubstr(string str, u64 start, u64 end);
 #define STR_LIT(s) (string){ (u8*)(s), sizeof((s)) - 1}
 #define STR_FMT(s8) (i32)(s8).size, (s8).str
-string StringMake(const u8* data, i64 count);
-string StringCstrlen(const char* data);
+string StringMake(u8* data, i64 count);
+size_t StringCstrlen(const char* data);
 string StringFromCstring(const char* data);
+b32 StringEquals(string a, string b);
 /* #define sasprintf(write_to, ...) { \ */
 /*  u8* tmp_string = (write_to); \ */
 /*  asprintf(&(write_to), __VA_ARGS__); \ */
@@ -141,14 +142,14 @@ void ArenaClear(MemArena* arena)
 // StringBuilder Functions
 //----------------------------------------------------------------------------------
 
-string StringCstrlen(const char* data)
+size_t StringCstrlen(const char* data)
 {
   size_t result = 0;
   while(data[result] != 0) result++;
   return result;
 }
 
-string StringMake(const u8* data, i64 count)
+string StringMake(u8* data, i64 count)
 {
   string result;
   result.size = count;
@@ -159,10 +160,29 @@ string StringMake(const u8* data, i64 count)
 string StringFromCstring(const char* data)
 {
   string result;
-  result.count = StringCstrlen(data);
-  result.str = data;
+  result.size = StringCstrlen(data);
+  result.str = (u8*)data;
   return result;
 }
+
+b32 StringEquals(string a, string b)
+{
+  // To Be Continued
+  if(a.size != b.size) return false;
+  if(a.str != b.str) return false;
+  const u8* left = a.str;
+  const u8* right = a.str;
+  for(i32 i = 0; i < a.size; i++, left++, right++){
+    if(*left != *right) return false;
+  }
+  return true;
+}
+
+/* b32 StringEquals(string a, string b) */
+/* { */
+/*     if(a.size != b.size) return false; */
+/*     return memcmp(a.str, b.str, a.size) == 0; */
+/* } */
 
 string StringSubstr(string str, u64 start, u64 end)
 {

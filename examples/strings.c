@@ -1,6 +1,7 @@
 #define DOMAIN_EXPANSION
-#include "../expansion.h"
 #include <stdio.h>
+#include "../expansion.h"
+
 
 int main(void)
 {
