@@ -30,7 +30,7 @@ typedef i32 b32;
 #define list_append(xs, x) \
 do { \
     if (xs.count >= xs.capacity) { \
-        if (xs.capacity == 0) xs.capacity = 256; \
+        if (xs.capacity == 0) xs.capacity = 16; \
         else xs.capacity *= 2; \
         void *tmp = realloc(xs.items, xs.capacity * sizeof(*xs.items)); \
         if (!tmp) exit(1); \
@@ -99,6 +99,7 @@ string ArenaStringAppend(MemArena *arena, string a, string b);
 MemArena* NewArena(size_t capacity)
 {
     MemArena* arena = (MemArena*)malloc(capacity);
+    if(arena == NULL) return;
     arena->capacity = capacity;
     arena->pos = ARENA_BASE_POS;
     return arena;
@@ -167,16 +168,19 @@ string StringFromCstring(const char* data)
 
 b32 StringEquals(string a, string b)
 {
-  // To Be Continued
-  if(a.size != b.size) return false;
-  if(a.str != b.str) return false;
-  const u8* left = a.str;
-  const u8* right = a.str;
-  for(i32 i = 0; i < a.size; i++, left++, right++){
-    if(*left != *right) return false;
+  if (a.size != b.size)
+    return false;
+
+  if (a.str == b.str)
+    return true; // Same buffer and same size
+
+  for (size_t i = 0; i < a.size; ++i){
+    if (a.str[i] != b.str[i])
+      return false;
   }
   return true;
 }
+
 
 /* b32 StringEquals(string a, string b) */
 /* { */
